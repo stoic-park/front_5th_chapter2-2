@@ -75,7 +75,11 @@ export const CartPage = ({ products, coupons }: Props) => {
                     </ul>
                   )}
                   <button
-                    onClick={() => addToCart(product)}
+                    onClick={() => 
+                      { 
+                        console.log(product);
+                        addToCart(product)
+                      }}
                     className={`w-full px-3 py-1 rounded ${
                       remainingStock > 0
                         ? 'bg-blue-500 text-white hover:bg-blue-600'
@@ -92,9 +96,10 @@ export const CartPage = ({ products, coupons }: Props) => {
         </div>
         <div>
           <h2 className="text-2xl font-semibold mb-4">장바구니 내역</h2>
-
+          {/* 장바구니 내역 */}  
           <div className="space-y-2">
             {cart.map(item => {
+
               const appliedDiscount = getAppliedDiscount(item);
               return (
                 <div key={item.product.id} className="flex justify-between items-center bg-white p-3 rounded shadow">
