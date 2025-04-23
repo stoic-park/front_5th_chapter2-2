@@ -1,4 +1,4 @@
-import { CartItem, Coupon, Product } from '../../types.ts';
+import { Coupon, Product } from '../../types.ts';
 import { useCart } from '../hooks';
 import { ProductList } from '../components/product/ProductList.tsx';
 import { CartList } from '../components/cart/CartList.tsx';
@@ -12,38 +12,7 @@ interface CartPageProps {
 
 export const CartPage = ({ products, coupons }: CartPageProps) => {
     const { cart, addToCart, removeFromCart, updateQuantity, applyCoupon, calculateTotal, selectedCoupon } = useCart();
-
-    // 계산
-    const getMaxDiscount = (discounts: { quantity: number; rate: number }[]) => {
-        return discounts.reduce((max, discount) => Math.max(max, discount.rate), 0);
-    };
-
-    //FIXME: 컴포넌트 분리하면서 여기서는 사용하지 안헥 됐다
-    // const getRemainingStock = (product: Product) => {
-    //     const cartItem = cart.find((item) => item.product.id === product.id);
-    //     return product.stock - (cartItem?.quantity || 0);
-    // };
-
-    // 외부의 영향을 받지 않도록 수정
-    const getRemainingStock = (product: Product, cartItems: CartItem[]) => {
-        const cartItem = cartItems.find((item) => item.product.id === product.id);
-        return product.stock - (cartItem?.quantity || 0);
-    };
-
     const { totalBeforeDiscount, totalAfterDiscount, totalDiscount } = calculateTotal();
-
-    //FIXME: 컴포넌트 분리하면서 여기서는 사용하지 안헥 됐다
-    const getAppliedDiscount = (item: CartItem) => {
-        const { discounts } = item.product;
-        const { quantity } = item;
-        let appliedDiscount = 0;
-        for (const discount of discounts) {
-            if (quantity >= discount.quantity) {
-                appliedDiscount = Math.max(appliedDiscount, discount.rate);
-            }
-        }
-        return appliedDiscount;
-    };
 
     return (
         <div className="container mx-auto p-4">

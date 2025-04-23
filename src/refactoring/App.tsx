@@ -47,6 +47,8 @@ const initialCoupons: Coupon[] = [
 ];
 
 const App = () => {
+    // FIXME: 여기서 자식들에게 내려주려고 하는 함수, 변수들을 컨텍스트화 해주면 되겠다
+    // 여기서 사용하려는 함수도 AppContext에 넣어주면 되겠다
     const { products, updateProduct, addProduct } = useProducts(initialProducts);
     const { coupons, addCoupon } = useCoupons(initialCoupons);
     const [isAdmin, setIsAdmin] = useState(false);
