@@ -1,12 +1,12 @@
-import { Product } from '../../types.ts';
+import { Product } from '../../../types';
 
-interface ProductCardProps {
+interface ProductListItemProps {
     product: Product;
     remainingStock: number;
     onAddToCart: (product: Product) => void;
 }
 
-export const ProductCard = ({ product, remainingStock, onAddToCart }: ProductCardProps) => {
+export const ProductListItem = ({ product, remainingStock, onAddToCart }: ProductListItemProps) => {
     const getMaxDiscount = (discounts: { quantity: number; rate: number }[]) => {
         return discounts.reduce((max, discount) => Math.max(max, discount.rate), 0);
     };

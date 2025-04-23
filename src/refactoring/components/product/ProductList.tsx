@@ -1,5 +1,5 @@
-import { Product } from '../../types.ts';
-import { ProductCard } from './ProductCard';
+import { Product } from '../../../types';
+import { ProductListItem } from './ProductListItem';
 
 interface ProductListProps {
     products: Product[];
@@ -20,7 +20,7 @@ export const ProductList = ({ products, cart, onAddToCart }: ProductListProps) =
                 {products.map((product) => {
                     const remainingStock = getRemainingStock(product);
                     return (
-                        <ProductCard
+                        <ProductListItem
                             key={product.id}
                             product={product}
                             remainingStock={remainingStock}
