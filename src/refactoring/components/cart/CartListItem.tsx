@@ -1,4 +1,5 @@
 import { CartItem } from '../../../types.ts';
+import { getAppliedDiscount } from '../../hooks/utils/discountUtils';
 
 interface CartListItemProps {
     item: CartItem;
@@ -7,18 +8,6 @@ interface CartListItemProps {
 }
 
 export const CartListItem = ({ item, onUpdateQuantity, onRemoveFromCart }: CartListItemProps) => {
-    const getAppliedDiscount = (item: CartItem) => {
-        const { discounts } = item.product;
-        const { quantity } = item;
-        let appliedDiscount = 0;
-        for (const discount of discounts) {
-            if (quantity >= discount.quantity) {
-                appliedDiscount = Math.max(appliedDiscount, discount.rate);
-            }
-        }
-        return appliedDiscount;
-    };
-
     const appliedDiscount = getAppliedDiscount(item);
 
     return (

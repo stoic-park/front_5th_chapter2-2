@@ -1,15 +1,16 @@
-import { Product } from '../../../types';
+import { Product, CartItem } from '../../../types';
+import { getMaxDiscount } from '../../hooks/utils/discountUtils';
+import { getRemainingStock } from '../../hooks/utils/cartUtils';
 
 interface ProductListItemProps {
     product: Product;
-    remainingStock: number;
+    cart: CartItem[];
     onAddToCart: (product: Product) => void;
 }
 
-export const ProductListItem = ({ product, remainingStock, onAddToCart }: ProductListItemProps) => {
-    const getMaxDiscount = (discounts: { quantity: number; rate: number }[]) => {
-        return discounts.reduce((max, discount) => Math.max(max, discount.rate), 0);
-    };
+export const ProductListItem = ({ product, cart, onAddToCart }: ProductListItemProps) => {
+    const maxDiscountPercentage = getMaxDiscount(product.discounts) * 100;
+    const remainingStock = getRemainingStock(product, cart);
 
     return (
         <div key={product.id} data-testid={`product-${product.id}`} className="bg-white p-3 rounded shadow">
@@ -22,9 +23,7 @@ export const ProductListItem = ({ product, remainingStock, onAddToCart }: Produc
                     재고: {remainingStock}개
                 </span>
                 {product.discounts.length > 0 && (
-                    <span className="ml-2 font-medium text-blue-600">
-                        최대 {(getMaxDiscount(product.discounts) * 100).toFixed(0)}% 할인
-                    </span>
+                    <span className="ml-2 font-medium text-blue-600">최대 {maxDiscountPercentage}% 할인</span>
                 )}
             </div>
             {product.discounts.length > 0 && (
