@@ -58,6 +58,7 @@ export const updateCartItemQuantity = (cart: CartItem[], productId: string, newQ
 
     const updatedCart = cart.map((item) => {
         if (item.product.id === productId) {
+            // 재고 한도 예외처리
             const quantity = item.product.stock >= newQuantity ? newQuantity : item.product.stock;
             return {
                 ...item,
