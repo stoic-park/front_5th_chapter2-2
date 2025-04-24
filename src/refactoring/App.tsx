@@ -5,7 +5,9 @@ import { Coupon, Product } from '../types.ts';
 import { ProductProvider, CouponProvider, CartProvider } from './provider';
 import { useProducts } from './hooks/useProduct';
 import { useCoupons } from './hooks/useCoupon';
+import { useLocalStorage } from './hooks/useLocalStorage';
 
+// FIXME: 상수로 빼자
 const initialProducts: Product[] = [
     {
         id: 'p1',
@@ -49,10 +51,12 @@ const initialCoupons: Coupon[] = [
 ];
 
 const App = () => {
-    // FIXME: 여기서 자식들에게 내려주려고 하는 함수, 변수들을 컨텍스트화 해주면 되겠다
-    // 여기서 사용하려는 함수도 AppContext에 넣어주면 되겠다
-    const { products, updateProduct, addProduct } = useProducts(initialProducts);
-    const { coupons, addCoupon } = useCoupons(initialCoupons);
+    const { getLocalStorage, setLocalStorage } = useLocalStorage();
+    setLocalStorage('products', initialProducts);
+    setLocalStorage('coupons', initialCoupons);
+
+    const { products, updateProduct, addProduct } = useProducts(getLocalStorage('products'));
+    const { coupons, addCoupon } = useCoupons(getLocalStorage('coupons'));
     const [isAdmin, setIsAdmin] = useState(false);
 
     return (
