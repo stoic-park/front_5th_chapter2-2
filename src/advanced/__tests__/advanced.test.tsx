@@ -2,51 +2,14 @@ import { describe, expect, test } from 'vitest';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { CartPage } from '../../refactoring/pages/CartPage';
 import { AdminPage } from '../../refactoring/pages/AdminPage';
-import { Coupon, Product } from '../../types';
 import { ProductProvider, CouponProvider, CartProvider } from '../../refactoring/provider';
-
-const mockProducts: Product[] = [
-    {
-        id: 'p1',
-        name: '상품1',
-        price: 10000,
-        stock: 20,
-        discounts: [{ quantity: 10, rate: 0.1 }],
-    },
-    {
-        id: 'p2',
-        name: '상품2',
-        price: 20000,
-        stock: 20,
-        discounts: [{ quantity: 10, rate: 0.15 }],
-    },
-    {
-        id: 'p3',
-        name: '상품3',
-        price: 30000,
-        stock: 20,
-        discounts: [{ quantity: 10, rate: 0.2 }],
-    },
-];
-const mockCoupons: Coupon[] = [
-    {
-        name: '5000원 할인 쿠폰',
-        code: 'AMOUNT5000',
-        discountType: 'amount',
-        discountValue: 5000,
-    },
-    {
-        name: '10% 할인 쿠폰',
-        code: 'PERCENT10',
-        discountType: 'percentage',
-        discountValue: 10,
-    },
-];
+import { initialProducts } from '../../refactoring/constants/product';
+import { initialCoupons } from '../../refactoring/constants/coupon';
 
 const TestAdminPage = () => {
     return (
-        <ProductProvider initialProducts={mockProducts}>
-            <CouponProvider initialCoupons={mockCoupons}>
+        <ProductProvider initialProducts={initialProducts}>
+            <CouponProvider initialCoupons={initialCoupons}>
                 <CartProvider>
                     <AdminPage />
                 </CartProvider>
@@ -59,8 +22,8 @@ describe('advanced > ', () => {
     describe('시나리오 테스트 > ', () => {
         test('장바구니 페이지 테스트 > ', async () => {
             render(
-                <ProductProvider initialProducts={mockProducts}>
-                    <CouponProvider initialCoupons={mockCoupons}>
+                <ProductProvider initialProducts={initialProducts}>
+                    <CouponProvider initialCoupons={initialCoupons}>
                         <CartProvider>
                             <CartPage />
                         </CartProvider>
@@ -217,10 +180,11 @@ describe('advanced > ', () => {
 
     describe('자유롭게 작성해보세요.', () => {
         test('새로운 유틸 함수를 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
+            // 유틸 함수 뭐가 있냐
             expect(true).toBe(false);
         });
 
-        test('새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
+        test('새로운 hook 함수를 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
             expect(true).toBe(false);
         });
     });

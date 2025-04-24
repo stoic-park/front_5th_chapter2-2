@@ -1,5 +1,5 @@
 import { Discount } from '../../../types';
-import { convertToPercentage } from '../../hooks/utils/discountUtils';
+import { convertToPercentage } from '../../hooks/utils/commonUtils';
 
 type DiscountListProps = {
     discounts: Discount[];

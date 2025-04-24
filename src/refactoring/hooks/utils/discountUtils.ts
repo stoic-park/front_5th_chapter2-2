@@ -1,4 +1,5 @@
 import { Discount, CartItem } from '../../../types';
+import { convertToPercentage } from './commonUtils';
 
 export const getMaxDiscount = (discounts: { quantity: number; rate: number }[]) => {
     return discounts.reduce((max, discount) => Math.max(max, discount.rate), 0);
@@ -15,8 +16,6 @@ export const getAppliedDiscount = (item: CartItem) => {
     }
     return appliedDiscount;
 };
-
-export const convertToPercentage = (rate: number): number => rate * 100;
 
 export const getMaxDiscountPercentage = (discounts: Discount[]): number => {
     return convertToPercentage(getMaxDiscount(discounts));

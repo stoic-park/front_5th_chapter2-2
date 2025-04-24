@@ -6,12 +6,6 @@ import { useAuth } from './hooks/useAuth';
 import { initialProducts } from './constants/product';
 import { initialCoupons } from './constants/coupon';
 
-// TODO:
-// 1. 배포
-// 2. 제출
-// 3. 테스트 코드 작성
-// 4. PR 작성
-
 const App = () => {
     const { isAdmin, setIsAdmin } = useAuth();
 

@@ -6,6 +6,7 @@ import { CartItem, Coupon, Product } from '../../types';
 import { useCart, useCoupons, useProducts } from '../../refactoring/hooks';
 import * as cartUtils from '../../refactoring/models/cart';
 import { ProductProvider, CouponProvider, CartProvider } from '../../refactoring/provider';
+
 const mockProducts: Product[] = [
     {
         id: 'p1',
