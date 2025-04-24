@@ -6,6 +6,7 @@ interface ApplyCouponProps {
     onApplyCoupon: (coupon: Coupon) => void;
 }
 
+// FIXME: 컨텍스트 적용하기
 export const ApplyCoupon = ({ coupons, selectedCoupon, onApplyCoupon }: ApplyCouponProps) => {
     return (
         <div className="mt-6 bg-white p-4 rounded shadow">
