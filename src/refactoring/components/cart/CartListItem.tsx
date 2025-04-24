@@ -20,8 +20,14 @@ export const CartListItem = ({ item }: { item: CartItem }) => {
                 appliedDiscount={appliedDiscount}
                 dicountPercentage={dicountPercentage}
             />
-            <QuantityControls quantity={item.quantity} onUpdateQuantity={updateQuantity} productId={item.product.id} />
-            <RemoveButton onRemoveFromCart={removeFromCart} productId={item.product.id} />
+            <div>
+                <QuantityControls
+                    quantity={item.quantity}
+                    onUpdateQuantity={updateQuantity}
+                    productId={item.product.id}
+                />
+                <RemoveButton onRemoveFromCart={removeFromCart} productId={item.product.id} />
+            </div>
         </div>
     );
 };

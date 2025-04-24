@@ -6,7 +6,7 @@ type QuantityControlsProps = {
 };
 
 export const QuantityControls = ({ quantity, onUpdateQuantity, productId }: QuantityControlsProps) => (
-    <div>
+    <>
         <button
             onClick={() => onUpdateQuantity(productId, quantity - 1)}
             className="bg-gray-300 text-gray-800 px-2 py-1 rounded mr-1 hover:bg-gray-400"
@@ -19,5 +19,5 @@ export const QuantityControls = ({ quantity, onUpdateQuantity, productId }: Quan
         >
             +
         </button>
-    </div>
+    </>
 );
