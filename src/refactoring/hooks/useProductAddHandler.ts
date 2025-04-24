@@ -2,6 +2,7 @@ import { Product } from '../../types';
 import { useState } from 'react';
 
 export const useProductAddHandler = () => {
+    const [showNewProductForm, setShowNewProductForm] = useState(false);
     const [newProduct, setNewProduct] = useState<Omit<Product, 'id'>>({
         name: '',
         price: 0,
@@ -9,10 +10,7 @@ export const useProductAddHandler = () => {
         discounts: [],
     });
 
-    const handleAddNewProduct = (
-        onProductAdd: (newProduct: Product) => void,
-        setShowNewProductForm: (show: boolean) => void
-    ) => {
+    const handleAddNewProduct = (onProductAdd: (newProduct: Product) => void) => {
         const productWithId = { ...newProduct, id: Date.now().toString() };
         onProductAdd(productWithId);
         setNewProduct({
@@ -25,6 +23,8 @@ export const useProductAddHandler = () => {
     };
 
     return {
+        showNewProductForm,
+        setShowNewProductForm,
         newProduct,
         setNewProduct,
         handleAddNewProduct,
