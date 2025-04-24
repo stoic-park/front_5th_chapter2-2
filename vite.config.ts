@@ -10,7 +10,7 @@ export default mergeConfig(
         build: {
             rollupOptions: {
                 input: {
-                    main: resolve(__dirname, 'index.html'),
+                    main: resolve(__dirname, 'index.refactoring.html'),
                     notFound: resolve(__dirname, '404.html'),
                 },
             },
