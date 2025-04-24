@@ -7,12 +7,10 @@ import { initialProducts } from './constants/product';
 import { initialCoupons } from './constants/coupon';
 
 // TODO:
-// 0. AdminPage 컴포넌트 분리
-// 1. 상수 분리
-// 2. 배포
-// 3. 제출
-// 4. 테스트 코드 작성
-// 5. PR 작성
+// 1. 배포
+// 2. 제출
+// 3. 테스트 코드 작성
+// 4. PR 작성
 
 const App = () => {
     const { isAdmin, setIsAdmin } = useAuth();
