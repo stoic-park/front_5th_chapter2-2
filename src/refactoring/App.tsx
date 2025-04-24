@@ -2,8 +2,6 @@ import { CartPage } from './pages/CartPage.tsx';
 import { AdminPage } from './pages/AdminPage.tsx';
 import { Coupon, Product } from '../types.ts';
 import { ProductProvider, CouponProvider, CartProvider } from './provider';
-import { useProducts } from './hooks/useProduct';
-import { useCoupons } from './hooks/useCoupon';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useAuth } from './hooks/useAuth';
 
@@ -53,12 +51,9 @@ const initialCoupons: Coupon[] = [
 const App = () => {
     const { isAdmin, setIsAdmin } = useAuth();
 
-    const { getLocalStorage, setLocalStorage } = useLocalStorage();
+    const { setLocalStorage } = useLocalStorage();
     setLocalStorage('products', initialProducts);
     setLocalStorage('coupons', initialCoupons);
-
-    const { products, updateProduct, addProduct } = useProducts(getLocalStorage('products'));
-    const { coupons, addCoupon } = useCoupons(getLocalStorage('coupons'));
 
     return (
         <ProductProvider initialProducts={initialProducts}>
@@ -76,19 +71,7 @@ const App = () => {
                                 </button>
                             </div>
                         </nav>
-                        <main className="container mx-auto mt-6">
-                            {isAdmin ? (
-                                <AdminPage
-                                    products={products}
-                                    coupons={coupons}
-                                    onProductUpdate={updateProduct}
-                                    onProductAdd={addProduct}
-                                    onCouponAdd={addCoupon}
-                                />
-                            ) : (
-                                <CartPage />
-                            )}
-                        </main>
+                        <main className="container mx-auto mt-6">{isAdmin ? <AdminPage /> : <CartPage />}</main>
                     </div>
                 </CartProvider>
             </CouponProvider>
