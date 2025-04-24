@@ -1,22 +1,61 @@
 import { describe, expect, test } from 'vitest';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within, renderHook } from '@testing-library/react';
 import { CartPage } from '../../refactoring/pages/CartPage';
 import { AdminPage } from '../../refactoring/pages/AdminPage';
 import { ProductProvider, CouponProvider, CartProvider } from '../../refactoring/provider';
-import { initialProducts } from '../../refactoring/constants/product';
-import { initialCoupons } from '../../refactoring/constants/coupon';
-import { CartItem, Product, Discount } from '../../types';
+import { CartItem, Product, Discount, Coupon } from '../../types';
 import { getRemainingStock } from '../../refactoring/hooks/utils/cartUtils';
 import {
     getMaxDiscount,
     getAppliedDiscount,
     getMaxDiscountPercentage,
 } from '../../refactoring/hooks/utils/discountUtils';
+import { useToggleAccordionHandler } from '../../refactoring/hooks/useToggleAccordionHandler';
+import { useDiscountHandler } from '../../refactoring/hooks/useDiscountHandler';
+import { vi } from 'vitest';
+
+const mockProducts: Product[] = [
+    {
+        id: 'p1',
+        name: '상품1',
+        price: 10000,
+        stock: 20,
+        discounts: [{ quantity: 10, rate: 0.1 }],
+    },
+    {
+        id: 'p2',
+        name: '상품2',
+        price: 20000,
+        stock: 20,
+        discounts: [{ quantity: 10, rate: 0.15 }],
+    },
+    {
+        id: 'p3',
+        name: '상품3',
+        price: 30000,
+        stock: 20,
+        discounts: [{ quantity: 10, rate: 0.2 }],
+    },
+];
+const mockCoupons: Coupon[] = [
+    {
+        name: '5000원 할인 쿠폰',
+        code: 'AMOUNT5000',
+        discountType: 'amount',
+        discountValue: 5000,
+    },
+    {
+        name: '10% 할인 쿠폰',
+        code: 'PERCENT10',
+        discountType: 'percentage',
+        discountValue: 10,
+    },
+];
 
 const TestAdminPage = () => {
     return (
-        <ProductProvider initialProducts={initialProducts}>
-            <CouponProvider initialCoupons={initialCoupons}>
+        <ProductProvider initialProducts={mockProducts}>
+            <CouponProvider initialCoupons={mockCoupons}>
                 <CartProvider>
                     <AdminPage />
                 </CartProvider>
@@ -29,8 +68,8 @@ describe('advanced > ', () => {
     describe('시나리오 테스트 > ', () => {
         test('장바구니 페이지 테스트 > ', async () => {
             render(
-                <ProductProvider initialProducts={initialProducts}>
-                    <CouponProvider initialCoupons={initialCoupons}>
+                <ProductProvider initialProducts={mockProducts}>
+                    <CouponProvider initialCoupons={mockCoupons}>
                         <CartProvider>
                             <CartPage />
                         </CartProvider>
@@ -329,7 +368,7 @@ describe('advanced > ', () => {
 
             describe('getMaxDiscountPercentage', () => {
                 test('할인 조건이 있을 때는 최대 할인율을 반환한다.', () => {
-                    const discounts: { quantity: number; rate: number }[] = [
+                    const discounts: Discount[] = [
                         { quantity: 2, rate: 0.1 },
                         { quantity: 5, rate: 0.2 },
                         { quantity: 10, rate: 0.15 },
@@ -339,7 +378,7 @@ describe('advanced > ', () => {
                 });
 
                 test('할인 조건이 없을 때는 0을 반환한다.', () => {
-                    const discounts: { quantity: number; rate: number }[] = [];
+                    const discounts: Discount[] = [];
                     const result = getMaxDiscountPercentage(discounts);
                     expect(result).toBe(0);
                 });
@@ -347,5 +386,139 @@ describe('advanced > ', () => {
         });
     });
 
-    describe('커스텀 훅 테스트', () => {});
+    describe('커스텀 훅 테스트', () => {
+        describe('useToggleAccordionHandler', () => {
+            describe('toggleProductAccordion', () => {
+                test('상품 아이디를 클릭하면 상품 아이디가 표시된다.', () => {
+                    const { result } = renderHook(() => useToggleAccordionHandler());
+                    act(() => {
+                        result.current.toggleProductAccordion('1');
+                    });
+                    expect(result.current.openProductIds.has('1')).toBe(true);
+                });
+                test('상품 아이디를 한번더 클릭하면 상품 아이디가 사라진다.', () => {
+                    const { result } = renderHook(() => useToggleAccordionHandler());
+                    act(() => {
+                        result.current.toggleProductAccordion('1');
+                    });
+                    expect(result.current.openProductIds.has('1')).toBe(true);
+                    act(() => {
+                        result.current.toggleProductAccordion('1');
+                    });
+                    expect(result.current.openProductIds.has('1')).toBe(false);
+                });
+            });
+        });
+        describe('useDiscountHandler', () => {
+            describe('setNewDiscount', () => {
+                test('새로운 할인 정보를 설정할 수 있다.', () => {
+                    const { result } = renderHook(() => useDiscountHandler());
+                    const updatedDiscount: Discount = {
+                        quantity: 5,
+                        rate: 0.1,
+                    };
+                    act(() => {
+                        result.current.setNewDiscount(updatedDiscount);
+                    });
+                    expect(result.current.newDiscount).toEqual(updatedDiscount);
+                });
+                test('handleAddDiscount 가 호출되면 새로운 할인 정보를 추가할 수 있다.', () => {
+                    const { result } = renderHook(() => useDiscountHandler());
+                    const productId = '1';
+                    const products: Product[] = [
+                        {
+                            id: productId,
+                            name: '상품 1',
+                            price: 1000,
+                            stock: 10,
+                            discounts: [],
+                        },
+                    ];
+                    const editingProduct: Product = {
+                        id: productId,
+                        name: '상품 1',
+                        price: 1000,
+                        stock: 10,
+                        discounts: [],
+                    };
+                    const updateProduct = vi.fn();
+                    const setEditingProduct = vi.fn();
+
+                    act(() => {
+                        result.current.setNewDiscount({
+                            quantity: 5,
+                            rate: 0.1,
+                        });
+                    });
+
+                    act(() => {
+                        result.current.handleAddDiscount(
+                            productId,
+                            products,
+                            editingProduct,
+                            updateProduct,
+                            setEditingProduct
+                        );
+                    });
+                    expect(updateProduct).toHaveBeenCalledTimes(1);
+                    expect(updateProduct).toHaveBeenCalledWith(
+                        expect.objectContaining({
+                            id: productId,
+                            discounts: [
+                                {
+                                    quantity: 5,
+                                    rate: 0.1,
+                                },
+                            ],
+                        })
+                    );
+
+                    expect(result.current.newDiscount).toEqual({
+                        quantity: 0,
+                        rate: 0,
+                    });
+                });
+                test('handleRemoveDiscount 가 호출되면 할인 정보를 삭제할 수 있다.', () => {
+                    const { result } = renderHook(() => useDiscountHandler());
+                    const productId = '1';
+                    const discountIndex = 0;
+                    const products: Product[] = [
+                        {
+                            id: productId,
+                            name: '상품 1',
+                            price: 1000,
+                            stock: 10,
+                            discounts: [
+                                {
+                                    quantity: 5,
+                                    rate: 0.1,
+                                },
+                            ],
+                        },
+                    ];
+                    const updateProduct = vi.fn();
+                    const setEditingProduct = vi.fn();
+
+                    act(() => {
+                        result.current.handleRemoveDiscount(
+                            productId,
+                            discountIndex,
+                            products,
+                            updateProduct,
+                            setEditingProduct
+                        );
+                    });
+
+                    // Assert
+                    expect(setEditingProduct).toHaveBeenCalledTimes(1);
+                    expect(setEditingProduct).toHaveBeenCalledWith(
+                        expect.objectContaining({
+                            id: productId,
+                            discounts: [],
+                        })
+                    );
+                });
+            });
+        });
+    });
 });
