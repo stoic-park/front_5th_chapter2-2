@@ -5,6 +5,13 @@ import { AdminPage } from '../../refactoring/pages/AdminPage';
 import { ProductProvider, CouponProvider, CartProvider } from '../../refactoring/provider';
 import { initialProducts } from '../../refactoring/constants/product';
 import { initialCoupons } from '../../refactoring/constants/coupon';
+import { CartItem, Product, Discount } from '../../types';
+import { getRemainingStock } from '../../refactoring/hooks/utils/cartUtils';
+import {
+    getMaxDiscount,
+    getAppliedDiscount,
+    getMaxDiscountPercentage,
+} from '../../refactoring/hooks/utils/discountUtils';
 
 const TestAdminPage = () => {
     return (
@@ -178,14 +185,167 @@ describe('advanced > ', () => {
         });
     });
 
-    describe('자유롭게 작성해보세요.', () => {
-        test('새로운 유틸 함수를 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
-            // 유틸 함수 뭐가 있냐
-            expect(true).toBe(false);
+    describe('유틸 함수 테스트', () => {
+        describe('cartUitls', () => {
+            describe('getRemainingStock', () => {
+                test('장바구니가 비어있을 때는 전체 재고를 반환한다.', () => {
+                    const product: Product = {
+                        id: '1',
+                        name: '상품1',
+                        price: 10000,
+                        stock: 10,
+                        discounts: [],
+                    };
+                    const cartItems: CartItem[] = [];
+                    const result = getRemainingStock(product, cartItems);
+                    expect(result).toBe(10);
+                });
+
+                test('장바구니에 상품이 있을 때는 재고를 반환한다.', () => {
+                    const product: Product = {
+                        id: '1',
+                        name: '상품1',
+                        price: 10000,
+                        stock: 10,
+                        discounts: [],
+                    };
+                    const cartItems: CartItem[] = [
+                        {
+                            product,
+                            quantity: 3,
+                        },
+                    ];
+                    const result = getRemainingStock(product, cartItems);
+                    expect(result).toBe(7);
+                });
+
+                test('상품이 품절일 때는 0을 반환한다.', () => {
+                    const product: Product = {
+                        id: '1',
+                        name: '상품1',
+                        price: 10000,
+                        stock: 5,
+                        discounts: [],
+                    };
+                    const cartItems: CartItem[] = [
+                        {
+                            product,
+                            quantity: 5,
+                        },
+                    ];
+                    const result = getRemainingStock(product, cartItems);
+                    expect(result).toBe(0);
+                });
+            });
         });
 
-        test('새로운 hook 함수를 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
-            expect(true).toBe(false);
+        describe('discountUtils', () => {
+            describe('getMaxDiscount', () => {
+                test('할인 조건이 없을 때는 0을 반환한다.', () => {
+                    const discounts: { quantity: number; rate: number }[] = [];
+                    const result = getMaxDiscount(discounts);
+                    expect(result).toBe(0);
+                });
+
+                test('할인 조건이 있을 때는 최대 할인율을 반환한다.', () => {
+                    const discounts: { quantity: number; rate: number }[] = [
+                        { quantity: 10, rate: 0.1 },
+                        { quantity: 20, rate: 0.2 },
+                    ];
+                    const result = getMaxDiscount(discounts);
+                    expect(result).toBe(0.2);
+                });
+
+                test('할인 조건이 같은 할인율을 가질 때는 최대 할인율을 반환한다.', () => {
+                    const discounts: { quantity: number; rate: number }[] = [
+                        { quantity: 2, rate: 0.1 },
+                        { quantity: 5, rate: 0.1 },
+                        { quantity: 10, rate: 0.1 },
+                    ];
+                    const result = getMaxDiscount(discounts);
+                    expect(result).toBe(0.1);
+                });
+            });
+
+            describe('getAppliedDiscount', () => {
+                test('할인 조건이 없을 때는 0을 반환한다.', () => {
+                    const product: Product = {
+                        id: '1',
+                        name: '상품1',
+                        price: 10000,
+                        stock: 10,
+                        discounts: [
+                            { quantity: 5, rate: 0.1 },
+                            { quantity: 10, rate: 0.2 },
+                        ],
+                    };
+                    const cartItem: CartItem = {
+                        product,
+                        quantity: 3,
+                    };
+                    const result = getAppliedDiscount(cartItem);
+                    expect(result).toBe(0);
+                });
+
+                test('할인 조건이 있을 때는 적용된 할인율을 반환한다.', () => {
+                    const product: Product = {
+                        id: '1',
+                        name: '상품1',
+                        price: 10000,
+                        stock: 10,
+                        discounts: [
+                            { quantity: 2, rate: 0.1 },
+                            { quantity: 5, rate: 0.2 },
+                            { quantity: 10, rate: 0.15 },
+                        ],
+                    };
+                    const cartItem: CartItem = {
+                        product,
+                        quantity: 7,
+                    };
+                    const result = getAppliedDiscount(cartItem);
+                    expect(result).toBe(0.2);
+                });
+
+                test('할인 조건이 같은 할인율을 가질 때는 최대 할인율을 반환한다.', () => {
+                    const product: Product = {
+                        id: '1',
+                        name: '상품1',
+                        price: 1000,
+                        stock: 10,
+                        discounts: [
+                            { quantity: 2, rate: 0.1 },
+                            { quantity: 5, rate: 0.2 },
+                        ],
+                    };
+                    const cartItem: CartItem = {
+                        product,
+                        quantity: 5,
+                    };
+                    const result = getAppliedDiscount(cartItem);
+                    expect(result).toBe(0.2);
+                });
+            });
+
+            describe('getMaxDiscountPercentage', () => {
+                test('할인 조건이 있을 때는 최대 할인율을 반환한다.', () => {
+                    const discounts: { quantity: number; rate: number }[] = [
+                        { quantity: 2, rate: 0.1 },
+                        { quantity: 5, rate: 0.2 },
+                        { quantity: 10, rate: 0.15 },
+                    ];
+                    const result = getMaxDiscountPercentage(discounts);
+                    expect(result).toBe(20);
+                });
+
+                test('할인 조건이 없을 때는 0을 반환한다.', () => {
+                    const discounts: { quantity: number; rate: number }[] = [];
+                    const result = getMaxDiscountPercentage(discounts);
+                    expect(result).toBe(0);
+                });
+            });
         });
     });
+
+    describe('커스텀 훅 테스트', () => {});
 });
