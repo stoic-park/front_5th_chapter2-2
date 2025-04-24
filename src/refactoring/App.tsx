@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { CartPage } from './pages/CartPage.tsx';
 import { AdminPage } from './pages/AdminPage.tsx';
 import { Coupon, Product } from '../types.ts';
@@ -6,6 +5,7 @@ import { ProductProvider, CouponProvider, CartProvider } from './provider';
 import { useProducts } from './hooks/useProduct';
 import { useCoupons } from './hooks/useCoupon';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { useAuth } from './hooks/useAuth';
 
 // FIXME: 상수로 빼자
 const initialProducts: Product[] = [
@@ -51,13 +51,14 @@ const initialCoupons: Coupon[] = [
 ];
 
 const App = () => {
+    const { isAdmin, setIsAdmin } = useAuth();
+
     const { getLocalStorage, setLocalStorage } = useLocalStorage();
     setLocalStorage('products', initialProducts);
     setLocalStorage('coupons', initialCoupons);
 
     const { products, updateProduct, addProduct } = useProducts(getLocalStorage('products'));
     const { coupons, addCoupon } = useCoupons(getLocalStorage('coupons'));
-    const [isAdmin, setIsAdmin] = useState(false);
 
     return (
         <ProductProvider initialProducts={initialProducts}>
