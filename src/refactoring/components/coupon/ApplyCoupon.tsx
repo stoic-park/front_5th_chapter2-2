@@ -1,18 +1,13 @@
-import { Coupon } from '../../../types.ts';
+import { useCouponContext, useCartContext } from '../../provider';
 
-interface ApplyCouponProps {
-    coupons: Coupon[];
-    selectedCoupon: Coupon | null;
-    onApplyCoupon: (coupon: Coupon) => void;
-}
-
-// FIXME: 컨텍스트 적용하기
-export const ApplyCoupon = ({ coupons, selectedCoupon, onApplyCoupon }: ApplyCouponProps) => {
+export const ApplyCoupon = () => {
+    const { coupons } = useCouponContext();
+    const { applyCoupon, selectedCoupon } = useCartContext();
     return (
         <div className="mt-6 bg-white p-4 rounded shadow">
             <h2 className="text-2xl font-semibold mb-2">쿠폰 적용</h2>
             <select
-                onChange={(e) => onApplyCoupon(coupons[parseInt(e.target.value)])}
+                onChange={(e) => applyCoupon(coupons[parseInt(e.target.value)])}
                 className="w-full p-2 border rounded mb-2"
             >
                 <option value="">쿠폰 선택</option>

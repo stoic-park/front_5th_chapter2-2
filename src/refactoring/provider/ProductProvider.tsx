@@ -10,9 +10,14 @@ interface ProductContextType {
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
-export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
-    // FIXME: 초기값 추가
-    const { products, updateProduct, addProduct } = useProducts([]);
+export const ProductProvider = ({
+    children,
+    initialProducts,
+}: {
+    children: React.ReactNode;
+    initialProducts: Product[];
+}) => {
+    const { products, updateProduct, addProduct } = useProducts(initialProducts);
 
     return (
         <ProductContext.Provider value={{ products, updateProduct, addProduct }}>{children}</ProductContext.Provider>

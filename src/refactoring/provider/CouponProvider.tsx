@@ -9,9 +9,14 @@ interface CouponContextType {
 
 const CouponContext = createContext<CouponContextType | undefined>(undefined);
 
-export const CouponProvider = ({ children }: { children: React.ReactNode }) => {
-    // FIXME: 초기값 추가
-    const { coupons, addCoupon } = useCoupons([]);
+export const CouponProvider = ({
+    children,
+    initialCoupons,
+}: {
+    children: React.ReactNode;
+    initialCoupons: Coupon[];
+}) => {
+    const { coupons, addCoupon } = useCoupons(initialCoupons);
 
     return <CouponContext.Provider value={{ coupons, addCoupon }}>{children}</CouponContext.Provider>;
 };

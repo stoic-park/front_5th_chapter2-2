@@ -1,19 +1,14 @@
-import { CartItem } from '../../../types.ts';
 import { CartItemInfo } from './CartItemInfo';
 import { QuantityControls } from './QuantityControls';
 import { RemoveButton } from './RemoveButton';
+import { useCartContext } from '../../provider';
 import { getAppliedDiscount, getMaxDiscountPercentage } from '../../hooks/utils/discountUtils';
+import { CartItem } from '../../../types';
 
-interface CartListItemProps {
-    item: CartItem;
-    onUpdateQuantity: (productId: string, quantity: number) => void;
-    onRemoveFromCart: (productId: string) => void;
-}
+export const CartListItem = ({ item }: { item: CartItem }) => {
+    const { updateQuantity, removeFromCart } = useCartContext();
 
-export const CartListItem = ({ item, onUpdateQuantity, onRemoveFromCart }: CartListItemProps) => {
-    //FIXME: 컨텍스트 빼주기
-    // const { getAppliedDiscount, getMaxDiscountPercentage } = useCartContext();
-
+    // 계산 로직
     const appliedDiscount = getAppliedDiscount(item);
     const dicountPercentage = getMaxDiscountPercentage(item.product.discounts);
 
@@ -25,12 +20,8 @@ export const CartListItem = ({ item, onUpdateQuantity, onRemoveFromCart }: CartL
                 appliedDiscount={appliedDiscount}
                 dicountPercentage={dicountPercentage}
             />
-            <QuantityControls
-                quantity={item.quantity}
-                onUpdateQuantity={onUpdateQuantity}
-                productId={item.product.id}
-            />
-            <RemoveButton onRemoveFromCart={onRemoveFromCart} productId={item.product.id} />
+            <QuantityControls quantity={item.quantity} onUpdateQuantity={updateQuantity} productId={item.product.id} />
+            <RemoveButton onRemoveFromCart={removeFromCart} productId={item.product.id} />
         </div>
     );
 };

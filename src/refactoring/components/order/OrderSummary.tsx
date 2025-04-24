@@ -1,10 +1,9 @@
-interface OrderSummaryProps {
-    totalBeforeDiscount: number;
-    totalDiscount: number;
-    totalAfterDiscount: number;
-}
+import { useCartContext } from '../../provider';
 
-export const OrderSummary = ({ totalBeforeDiscount, totalDiscount, totalAfterDiscount }: OrderSummaryProps) => {
+export const OrderSummary = () => {
+    const { calculateTotal } = useCartContext();
+    const { totalBeforeDiscount, totalDiscount, totalAfterDiscount } = calculateTotal();
+
     return (
         <div className="mt-6 bg-white p-4 rounded shadow">
             <h2 className="text-2xl font-semibold mb-2">주문 요약</h2>

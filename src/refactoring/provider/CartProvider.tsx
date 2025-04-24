@@ -9,15 +9,18 @@ interface CartContextType {
     updateQuantity: (productId: string, newQuantity: number) => void;
     applyCoupon: (coupon: Coupon) => void;
     calculateTotal: () => { totalBeforeDiscount: number; totalAfterDiscount: number; totalDiscount: number };
+    selectedCoupon: Coupon | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-    const { cart, addToCart, removeFromCart, updateQuantity, applyCoupon, calculateTotal } = useCart();
+    const { cart, addToCart, removeFromCart, updateQuantity, applyCoupon, calculateTotal, selectedCoupon } = useCart();
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, applyCoupon, calculateTotal }}>
+        <CartContext.Provider
+            value={{ cart, addToCart, removeFromCart, updateQuantity, applyCoupon, calculateTotal, selectedCoupon }}
+        >
             {children}
         </CartContext.Provider>
     );

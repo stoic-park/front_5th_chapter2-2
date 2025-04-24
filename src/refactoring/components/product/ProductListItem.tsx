@@ -1,18 +1,20 @@
-import { Product, CartItem } from '../../../types';
+import { Product } from '../../../types';
 import { getMaxDiscountPercentage } from '../../hooks/utils/discountUtils';
 import { getRemainingStock } from '../../hooks/utils/cartUtils';
 import { ProductDisplay } from './ProductDisplay';
 import { DiscountDisplay } from './DiscountDisplay';
 import { StockDisplay } from './StockDisplay';
 import { AddToCartButton } from './AddToCartButton';
+import { useCartContext } from '../../provider';
 
 interface ProductListItemProps {
     product: Product;
-    cart: CartItem[];
-    onAddToCart: (product: Product) => void;
 }
 
-export const ProductListItem = ({ product, cart, onAddToCart }: ProductListItemProps) => {
+export const ProductListItem = ({ product }: ProductListItemProps) => {
+    const { cart, addToCart } = useCartContext();
+
+    // 계산 로직
     const maxDiscountPercentage = getMaxDiscountPercentage(product.discounts);
     const remainingStock = getRemainingStock(product, cart);
 
@@ -21,7 +23,7 @@ export const ProductListItem = ({ product, cart, onAddToCart }: ProductListItemP
             <ProductDisplay name={product.name} price={product.price} />
             <StockDisplay remainingStock={remainingStock} />
             <DiscountDisplay maxDiscountPercentage={maxDiscountPercentage} discounts={product.discounts} />
-            <AddToCartButton remainingStock={remainingStock} onAddToCart={onAddToCart} product={product} />
+            <AddToCartButton remainingStock={remainingStock} onAddToCart={addToCart} product={product} />
         </div>
     );
 };
