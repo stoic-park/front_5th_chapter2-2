@@ -3,7 +3,13 @@ import { useToggleAccordionHandler } from '../../hooks/useToggleAccordionHandler
 import { useProductEditHandler } from '../../hooks/useProductEditHandler';
 import { useDiscountHandler } from '../../hooks/useDiscountHandler';
 import { useProductContext } from '../../provider/ProductProvider';
-export const ProductManagementListItem = ({ product, index }: { product: Product; index: number }) => {
+
+interface ProductManagementListItemProps {
+    product: Product;
+    index: number;
+}
+
+export const ProductManagementListItem = ({ product, index }: ProductManagementListItemProps) => {
     const { openProductIds, toggleProductAccordion } = useToggleAccordionHandler();
     const {
         editingProduct,
@@ -14,9 +20,7 @@ export const ProductManagementListItem = ({ product, index }: { product: Product
         handleEditComplete,
         handleStockUpdate,
     } = useProductEditHandler();
-
     const { products, updateProduct } = useProductContext();
-
     const { newDiscount, setNewDiscount, handleAddDiscount, handleRemoveDiscount } = useDiscountHandler();
 
     return (
